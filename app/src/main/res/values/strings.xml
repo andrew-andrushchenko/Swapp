@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Swapp</string>
+    <string name="person_name">Person name</string>
+    <string name="msg_nothing_found">Seems like nothing found :(</string>
+    <string name="person_birth">Birth:\u0020</string>
+    <string name="person_kg">\u0020kg</string>
+    <string name="person_cm">\u0020cm</string>
+    <string name="person_mass">Mass:</string>
+    <string name="person_height">Height:</string>
+    <string name="person_gender">Gender:</string>
+    <string name="person_skin">Skin:</string>
+    <string name="person_hair">Hair:</string>
+
+
+    <string name="search_hint">Type a name or a surname</string>
+    <string name="search">Search</string>
+    <string name="search_results">Search results</string>
+</resources>
