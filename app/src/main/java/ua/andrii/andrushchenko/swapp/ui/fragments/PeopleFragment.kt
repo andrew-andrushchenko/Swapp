@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import ua.andrii.andrushchenko.swapp.R
@@ -18,8 +19,7 @@ import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsPeopleAdapter
 import ua.andrii.andrushchenko.swapp.ui.viewmodels.StarWarsPeopleViewModel
 
 @AndroidEntryPoint
-class PeopleFragment : Fragment(R.layout.fragment_people),
-    StarWarsPeopleAdapter.OnItemClickListener {
+class PeopleFragment : Fragment(R.layout.fragment_people) {
 
     private val viewModel by viewModels<StarWarsPeopleViewModel>()
 
@@ -31,7 +31,12 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
 
         _binding = FragmentPeopleBinding.bind(view)
 
-        val adapter = StarWarsPeopleAdapter(this)
+        val adapter = StarWarsPeopleAdapter(object : StarWarsPeopleAdapter.OnItemClickListener {
+            override fun onItemClick(person: Person) {
+                val action = PeopleFragmentDirections.actionPeopleFragmentToDetailsFragment(person)
+                findNavController().navigate(action)
+            }
+        })
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -41,6 +46,10 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
                 footer = StarWarsLoadStateAdapter { adapter.retry() }
             )
             buttonRetry.setOnClickListener { adapter.retry() }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                viewModel.searchPeople("")
+            }
         }
 
         viewModel.people.observe(viewLifecycleOwner) {
@@ -50,16 +59,18 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
         adapter.addLoadStateListener { loadState ->
             binding.apply {
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-                recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
+                swipeRefreshLayout.isVisible = loadState.source.refresh is LoadState.NotLoading
                 buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
                 textViewError.isVisible = loadState.source.refresh is LoadState.Error
+                //FIXME: rethink
+                swipeRefreshLayout.isRefreshing = false
 
                 // empty view
                 if (loadState.source.refresh is LoadState.NotLoading &&
                     loadState.append.endOfPaginationReached &&
                     adapter.itemCount < 1
                 ) {
-                    recyclerView.isVisible = false
+                    swipeRefreshLayout.isVisible = false
                     textViewEmpty.isVisible = true
                 } else {
                     textViewEmpty.isVisible = false
@@ -68,10 +79,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
         }
 
         setHasOptionsMenu(true)
-    }
-
-    override fun onItemClick(person: Person) {
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -84,19 +91,19 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                /*if (query != null) {
-                    binding.recyclerView.scrollToPosition(0)
+                if (query != null) {
+                    //binding.recyclerView.scrollToPosition(0)
                     viewModel.searchPeople(query)
                     searchView.clearFocus()
-                }*/
-                searchView.clearFocus()
+                }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    binding.recyclerView.scrollToPosition(0)
-                    viewModel.searchPeople(newText)
+                    if (newText.isEmpty()) {
+                        viewModel.searchPeople(newText)
+                    }
                 }
                 return true
             }

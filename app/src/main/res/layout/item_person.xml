@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/indent_8dp"
+    app:cardElevation="@dimen/indent_8dp"
     app:rippleColor="@color/colorAccent">
 
-    <ImageView
-        android:id="@+id/image_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/card_img_height"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/person"
-        android:transitionName="shared_person_image" />
+        android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorAccent"
-        android:padding="@dimen/indent_8dp">
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/card_img_height"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/person"
+            android:transitionName="shared_person_image" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@id/image_view"
+            android:background="@drawable/gradient" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_person_name"
-            style="@style/TextAppearance.AppCompat.Medium"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_alignBottom="@id/image_view"
+            android:layout_margin="@dimen/indent_8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
             android:maxLines="1"
-            android:textColor="?attr/colorControlNormal"
+            android:textColor="#FFF"
             tools:text="@string/person_name" />
-    </FrameLayout>
 
-</LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

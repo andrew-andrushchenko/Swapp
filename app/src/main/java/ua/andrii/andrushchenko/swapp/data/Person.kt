@@ -18,11 +18,13 @@ data class Person(
     @SerializedName("birth_year")
     val birthYear: String,
     val gender: String,
-    val homeworld: String,
+    @SerializedName("homeworld")
+    val homeWorld: String,
     val films: List<String>?,
     val species: List<String>?,
     val vehicles: List<String>?,
-    val starships: List<String>?,
+    @SerializedName("starships")
+    val starShips: List<String>?,
     val created: String,
     val edited: String,
     val url: String

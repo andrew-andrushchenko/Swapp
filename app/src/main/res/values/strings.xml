@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Swapp</string>
+    <string name="app_name">Star Wars App</string>
     <string name="person_name">Person name</string>
     <string name="msg_nothing_found">Seems like nothing found :(</string>
     <string name="person_birth">Birth:\u0020</string>

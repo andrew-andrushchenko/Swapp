@@ -8,6 +8,19 @@
     <fragment
         android:id="@+id/peopleFragment"
         android:name="ua.andrii.andrushchenko.swapp.ui.fragments.PeopleFragment"
-        android:label="fragment_people"
-        tools:layout="@layout/fragment_people" />
+        android:label="All people"
+        tools:layout="@layout/fragment_people">
+        <action
+            android:id="@+id/action_peopleFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ua.andrii.andrushchenko.swapp.ui.fragments.DetailsFragment"
+        android:label="Person info"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="person"
+            app:argType="ua.andrii.andrushchenko.swapp.data.Person" />
+    </fragment>
 </navigation>

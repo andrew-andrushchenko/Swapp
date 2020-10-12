@@ -29,7 +29,7 @@ class StarWarsPagingSource(
                     nextKey = if (response.hasMore()) position + 1 else null
                 )
             } else {
-                response = starWarsApi.getPeopleByName(query)
+                response = starWarsApi.searchPeopleByName(query)
                 people = response.results
 
                 LoadResult.Page(
