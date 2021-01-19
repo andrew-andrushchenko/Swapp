@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import ua.andrii.andrushchenko.swapp.R
-import ua.andrii.andrushchenko.swapp.data.Person
+import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.databinding.ItemPersonBinding
 
 class StarWarsPeopleAdapter(private val listener: OnItemClickListener) :
@@ -44,7 +44,7 @@ class StarWarsPeopleAdapter(private val listener: OnItemClickListener) :
         fun bind(person: Person) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(person.getPersonImagePath())
+                    .load(person.personImagePath)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.person)

@@ -1,23 +1,22 @@
 package ua.andrii.andrushchenko.swapp.ui.fragments
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import ua.andrii.andrushchenko.swapp.R
-import ua.andrii.andrushchenko.swapp.data.Person
+import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.databinding.FragmentPeopleBinding
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsLoadStateAdapter
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsPeopleAdapter
 import ua.andrii.andrushchenko.swapp.ui.viewmodels.StarWarsPeopleViewModel
 
+@ExperimentalPagingApi
 @AndroidEntryPoint
 class PeopleFragment : Fragment(R.layout.fragment_people) {
 
@@ -48,7 +47,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
             buttonRetry.setOnClickListener { adapter.retry() }
 
             swipeRefreshLayout.setOnRefreshListener {
-                viewModel.searchPeople("")
+                /*viewModel.searchPeople("https://swapi.dev/api/planets/10/")*/
+                adapter.retry()
             }
         }
 
@@ -78,10 +78,10 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
             }
         }
 
-        setHasOptionsMenu(true)
+        //setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
         inflater.inflate(R.menu.menu_sw, menu)
@@ -108,7 +108,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
                 return true
             }
         })
-    }
+    }*/
 
     override fun onDestroyView() {
         super.onDestroyView()

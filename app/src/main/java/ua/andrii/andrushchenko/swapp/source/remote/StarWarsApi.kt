@@ -1,4 +1,4 @@
-package ua.andrii.andrushchenko.swapp.api
+package ua.andrii.andrushchenko.swapp.source.remote
 
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -6,7 +6,7 @@ import retrofit2.http.Query
 interface StarWarsApi {
 
     @GET("people/")
-    suspend fun getPeopleByPage(@Query("page") page: Int): StarWarsApiResponse
+    suspend fun getPeopleByPage(@Query("page") page: Int?): StarWarsApiResponse
 
     @GET("people/")
     suspend fun searchPeopleByName(@Query("search") name: String): StarWarsApiResponse

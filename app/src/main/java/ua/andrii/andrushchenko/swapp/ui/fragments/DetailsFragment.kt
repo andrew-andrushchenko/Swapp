@@ -3,6 +3,7 @@ package ua.andrii.andrushchenko.swapp.ui.fragments
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -27,7 +28,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             val person = args.person
 
             Glide.with(this@DetailsFragment)
-                .load(person.getPersonImagePath())
+                .load(person.personImagePath)
                 .error(R.drawable.person)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -61,6 +62,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     }
                 })
                 .into(imageView)
+
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = person.name
 
             textViewPersonName.text = person.name
             textViewPersonBirthDate.text = "Birth: ${person.birthYear}"

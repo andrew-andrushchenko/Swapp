@@ -1,9 +1,10 @@
-package ua.andrii.andrushchenko.swapp.data
+package ua.andrii.andrushchenko.swapp.source
 
 import androidx.paging.PagingSource
 import retrofit2.HttpException
-import ua.andrii.andrushchenko.swapp.api.StarWarsApi
-import ua.andrii.andrushchenko.swapp.api.StarWarsApiResponse
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApiResponse
+import ua.andrii.andrushchenko.swapp.model.Person
 import java.io.IOException
 
 private const val SW_STARTING_PAGE_INDEX = 1

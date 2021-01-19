@@ -1,6 +1,6 @@
-package ua.andrii.andrushchenko.swapp.api
+package ua.andrii.andrushchenko.swapp.source.remote
 
-import ua.andrii.andrushchenko.swapp.data.Person
+import ua.andrii.andrushchenko.swapp.model.Person
 
 data class StarWarsApiResponse(
     val next: String?,
