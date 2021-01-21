@@ -2,9 +2,9 @@
     <string name="app_name">Star Wars App</string>
     <string name="person_name">Person name</string>
     <string name="msg_nothing_found">Seems like nothing found :(</string>
-    <string name="person_birth">Birth:\u0020</string>
-    <string name="person_kg">\u0020kg</string>
-    <string name="person_cm">\u0020cm</string>
+    <string name="person_birth">Birth:</string>
+    <string name="person_kg">kg</string>
+    <string name="person_cm">cm</string>
     <string name="person_mass">Mass:</string>
     <string name="person_height">Height:</string>
     <string name="person_gender">Gender:</string>
@@ -15,4 +15,10 @@
     <string name="search_hint">Type a name or a surname</string>
     <string name="search">Search</string>
     <string name="search_results">Search results</string>
+    <string name="error_loading_results">Results could not be loaded</string>
+    <string name="txt_retry">Retry</string>
+    <string name="no_results_for_query">No results found for this query</string>
+    <string name="fragment_people_title">All characters</string>
+    <string name="fragment_person_details">Person info</string>
+    <string name="person_eye_color">Eyes:</string>
 </resources>

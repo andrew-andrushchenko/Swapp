@@ -1,5 +1,6 @@
 package ua.andrii.andrushchenko.swapp.ui.fragments
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
@@ -19,6 +20,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,13 +68,20 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             (requireActivity() as AppCompatActivity).supportActionBar?.title = person.name
 
             textViewPersonName.text = person.name
-            textViewPersonBirthDate.text = "Birth: ${person.birthYear}"
-            textViewPersonHeight.text = "Height: ${person.height}"
-            textViewPersonMass.text = "Mass: ${person.mass}"
-            textViewPersonHairColor.text = "Hair: ${person.hairColor}"
-            textViewPersonSkinColor.text = "Skin: ${person.skinColor}"
-            textViewPersonEyeColor.text = "Eye color: ${person.eyeColor}"
-            textViewPersonGender.text = "Gender: ${person.gender}"
+            textViewPersonBirthDate.text =
+                "${resources.getString(R.string.person_birth)} ${person.birthYear}"
+            textViewPersonHeight.text =
+                "${resources.getString(R.string.person_height)} ${person.height} ${resources.getString(R.string.person_cm)}"
+            textViewPersonMass.text =
+                "${resources.getString(R.string.person_mass)} ${person.mass} ${resources.getString(R.string.person_kg)}"
+            textViewPersonHairColor.text =
+                "${resources.getString(R.string.person_hair)} ${person.hairColor}"
+            textViewPersonSkinColor.text =
+                "${resources.getString(R.string.person_skin)} ${person.skinColor}"
+            textViewPersonEyeColor.text =
+                "${resources.getString(R.string.person_eye_color)} ${person.eyeColor}"
+            textViewPersonGender.text =
+                "${resources.getString(R.string.person_gender)} ${person.gender}"
             textViewPersonHomeWorld.text = person.homeWorld
         }
 

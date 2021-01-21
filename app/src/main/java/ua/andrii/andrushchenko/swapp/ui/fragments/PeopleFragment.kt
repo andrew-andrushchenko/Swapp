@@ -2,25 +2,27 @@ package ua.andrii.andrushchenko.swapp.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import ua.andrii.andrushchenko.swapp.R
-import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.databinding.FragmentPeopleBinding
+import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsLoadStateAdapter
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsPeopleAdapter
-import ua.andrii.andrushchenko.swapp.ui.viewmodels.StarWarsPeopleViewModel
+import ua.andrii.andrushchenko.swapp.ui.viewmodels.PeopleViewModel
 
 @ExperimentalPagingApi
 @AndroidEntryPoint
 class PeopleFragment : Fragment(R.layout.fragment_people) {
 
-    private val viewModel by viewModels<StarWarsPeopleViewModel>()
+    private val viewModel by viewModels<PeopleViewModel>()
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
@@ -39,7 +41,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
-            recyclerView.itemAnimator = null
+            //recyclerView.itemAnimator = null
             recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
                 header = StarWarsLoadStateAdapter { adapter.retry() },
                 footer = StarWarsLoadStateAdapter { adapter.retry() }
@@ -47,22 +49,17 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
             buttonRetry.setOnClickListener { adapter.retry() }
 
             swipeRefreshLayout.setOnRefreshListener {
-                /*viewModel.searchPeople("https://swapi.dev/api/planets/10/")*/
-                adapter.retry()
+                adapter.refresh()
+                swipeRefreshLayout.isRefreshing = false
             }
         }
 
-        viewModel.people.observe(viewLifecycleOwner) {
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
-        }
-
-        adapter.addLoadStateListener { loadState ->
+        /*adapter.addLoadStateListener { loadState ->
             binding.apply {
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 swipeRefreshLayout.isVisible = loadState.source.refresh is LoadState.NotLoading
                 buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
                 textViewError.isVisible = loadState.source.refresh is LoadState.Error
-                //FIXME: rethink
                 swipeRefreshLayout.isRefreshing = false
 
                 // empty view
@@ -75,6 +72,12 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
                 } else {
                     textViewEmpty.isVisible = false
                 }
+            }
+        }*/
+
+        lifecycleScope.launch {
+            viewModel.people.distinctUntilChanged().collectLatest {
+                adapter.submitData(it)
             }
         }
 

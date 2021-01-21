@@ -6,10 +6,10 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import retrofit2.HttpException
-import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
-import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
 import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.model.RemoteKey
+import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
 import java.io.IOException
 import java.io.InvalidObjectException
 
@@ -23,27 +23,50 @@ class StarWarsRemoteMediator(
     private val remoteKeyDao = starWarsDb.remoteKeyDao()
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Person>): MediatorResult {
-
-        val page = when (val pageKeyData = getPageKeyData(loadType, state)) {
-            is MediatorResult.Success -> {
-                return pageKeyData
-            }
-            else -> {
-                pageKeyData as Int
-            }
-        }
-
         return try {
-            val response = starWarsApi.getPeopleByPage(page)
-            val isEndOfPagination = response.results.isEmpty()
+            val loadKey = when (loadType) {
+                LoadType.REFRESH -> {
+                    val remoteKeys = getClosestRemoteKey(state)
+                    remoteKeys?.prevKey ?: DEFAULT_PAGE_INDEX
+                }
+                LoadType.PREPEND -> {
+                    val remoteKeys = getFirstRemoteKey(state)
+                        ?: throw InvalidObjectException("Invalid state, key should not be null")
+
+                    if (remoteKeys.prevKey == null) {
+                        //end of list condition reached
+                        return MediatorResult.Success(endOfPaginationReached = true)
+                    }
+                    remoteKeys.prevKey
+
+                }
+                LoadType.APPEND -> {
+                    val remoteKeys = getLastRemoteKey(state)
+                        ?: throw InvalidObjectException("Invalid state, key should not be null")
+
+                    if (remoteKeys.nextKey == null) {
+                        //end of list condition reached
+                        return MediatorResult.Success(endOfPaginationReached = true)
+                    }
+
+                    remoteKeys.nextKey
+                }
+            }
+
+            val response = starWarsApi.getPeopleByPage(loadKey)
 
             starWarsDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     remoteKeyDao.clearAll()
                     peopleDao.deleteAll()
                 }
-                val prevKey = if (page == DEFAULT_PAGE_INDEX) null else page - 1
-                val nextKey = if (isEndOfPagination) null else page + 1
+
+                /*Since 'next' and 'previous' properties type is String?
+                * and information about next and previous pages placed at the
+                * end of the corresponding strings
+                * we should take last chars until they are digits*/
+                val prevKey = response.previous?.takeLastWhile { it.isDigit() }?.toInt()
+                val nextKey = response.next?.takeLastWhile { it.isDigit() }?.toInt()
 
                 val keys = response.results.map {
                     RemoteKey(label = it.url, prevKey = prevKey, nextKey = nextKey)
@@ -53,7 +76,9 @@ class StarWarsRemoteMediator(
                 peopleDao.insertAll(response.results)
             }
 
-            MediatorResult.Success(endOfPaginationReached = isEndOfPagination)
+            //If there are no more results then end of list condition reached
+            //if there are some items then end of list is not reached
+            MediatorResult.Success(endOfPaginationReached = response.results.isEmpty())
 
         } catch (e: IOException) {
             MediatorResult.Error(e)
@@ -62,33 +87,34 @@ class StarWarsRemoteMediator(
         }
     }
 
-    private suspend fun getPageKeyData(loadType: LoadType, state: PagingState<Int, Person>): Any? {
+    /*private suspend fun getPageKeyData(loadType: LoadType, state: PagingState<Int, Person>): Any {
         return when (loadType) {
             LoadType.REFRESH -> {
-                val remoteKey = getClosestRemoteKey(state)
-                remoteKey?.nextKey?.minus(1) ?: DEFAULT_PAGE_INDEX
+                *//*val remoteKey = getClosestRemoteKey(state)
+                remoteKey?.nextKey?.minus(1) ?: DEFAULT_PAGE_INDEX*//*
+                DEFAULT_PAGE_INDEX
             }
             LoadType.APPEND -> {
                 val remoteKeys = getLastRemoteKey(state)
                     ?: throw InvalidObjectException("Remote key should not be null for $loadType")
-                remoteKeys.nextKey
-
+                remoteKeys.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
             }
             LoadType.PREPEND -> {
                 val remoteKeys = getFirstRemoteKey(state)
                     ?: throw InvalidObjectException("Invalid state, key should not be null")
                 //end of list condition reached
                 remoteKeys.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
-                remoteKeys.prevKey //TODO: review
+                //remoteKeys.prevKey //TODO: review
             }
         }
-    }
+    }*/
 
     private suspend fun getLastRemoteKey(state: PagingState<Int, Person>): RemoteKey? {
         return state.pages
             .lastOrNull { it.data.isNotEmpty() }
             ?.data?.lastOrNull()
-            ?.let { person -> person.url.let { remoteKeyDao.remoteKeyByLabel(it) } }
+            ?.let { person -> remoteKeyDao.remoteKeyByLabel(person.url) }
+        //return state.lastItemOrNull()?.let { person -> remoteKeyDao.remoteKeyByLabel(person.url) }
     }
 
     /**
@@ -98,7 +124,8 @@ class StarWarsRemoteMediator(
         return state.pages
             .firstOrNull { it.data.isNotEmpty() }
             ?.data?.firstOrNull()
-            ?.let { person -> person.url.let { remoteKeyDao.remoteKeyByLabel(it) } }
+            ?.let { person -> remoteKeyDao.remoteKeyByLabel(person.url) }
+        //return state.firstItemOrNull()?.let { person -> remoteKeyDao.remoteKeyByLabel(person.url) }
     }
 
     /**
@@ -116,44 +143,3 @@ class StarWarsRemoteMediator(
         const val DEFAULT_PAGE_INDEX = 1
     }
 }
-
-/*val loadKey = when (loadType) {
-                LoadType.REFRESH -> null
-                LoadType.PREPEND -> return MediatorResult.Success(
-                    endOfPaginationReached = true
-                )
-                LoadType.APPEND -> {
-                    val remoteKey = starWarsDb.withTransaction {
-                        remoteKeyDao.remoteKeyByLabel(label)
-                    }
-
-                    if (remoteKey.nextKey == null) {
-                        return MediatorResult.Success(
-                            endOfPaginationReached = true
-                        )
-                    }
-
-                    remoteKey.nextKey
-                }
-            }
-
-            val response = starWarsApi.getPeopleByPage(loadKey?.toInt())
-
-            starWarsDb.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    remoteKeyDao.deleteByLabel(label)
-                    peopleDao.deleteByLabel(label)
-                    //peopleDao.deleteAll()
-                    //peopleDao.deleteByQuery(query)
-                }
-
-                remoteKeyDao.insertOrReplace(
-                    RemoteKey(response.results.last().personNumber.toString(), response.next)
-                )
-
-                peopleDao.insertAll(response.results)
-            }
-
-            MediatorResult.Success(
-                endOfPaginationReached = response.next == null
-            )*/

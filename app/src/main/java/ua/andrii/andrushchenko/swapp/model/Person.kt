@@ -33,9 +33,7 @@ data class Person(
 ) : Parcelable {
 
     private val urlChunks: List<String>
-        get() {
-            return url.split("/") ?: arrayListOf("")
-        }
+        get() = url.split("/")
 
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

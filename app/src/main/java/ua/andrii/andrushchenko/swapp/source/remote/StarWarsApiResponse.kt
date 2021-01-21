@@ -6,6 +6,4 @@ data class StarWarsApiResponse(
     val next: String?,
     val previous: String?,
     val results: List<Person>
-) {
-    fun hasMore() = next?.isNotEmpty() ?: false
-}
+)

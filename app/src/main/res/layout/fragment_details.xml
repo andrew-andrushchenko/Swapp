@@ -21,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/indent_8dp"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/person_name"
                 tools:layout_height="@dimen/card_img_height"
                 tools:scaleType="centerCrop"
                 tools:src="@drawable/person" />

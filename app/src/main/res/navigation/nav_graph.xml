@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/peopleFragment"
         android:name="ua.andrii.andrushchenko.swapp.ui.fragments.PeopleFragment"
-        android:label="All people"
+        android:label="@string/fragment_people_title"
         tools:layout="@layout/fragment_people">
         <action
             android:id="@+id/action_peopleFragment_to_detailsFragment"
@@ -21,7 +21,7 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="ua.andrii.andrushchenko.swapp.ui.fragments.DetailsFragment"
-        android:label="Person info"
+        android:label="@string/fragment_person_details"
         tools:layout="@layout/fragment_details">
         <argument
             android:name="person"

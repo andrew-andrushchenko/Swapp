@@ -10,7 +10,7 @@ import androidx.paging.cachedIn
 import ua.andrii.andrushchenko.swapp.source.StarWarsRepository
 
 @ExperimentalPagingApi
-class StarWarsPeopleViewModel @ViewModelInject constructor(
+class PeopleViewModel @ViewModelInject constructor(
     private val repository: StarWarsRepository,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {

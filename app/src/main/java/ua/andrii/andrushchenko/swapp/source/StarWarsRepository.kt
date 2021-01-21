@@ -3,9 +3,9 @@ package ua.andrii.andrushchenko.swapp.source
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.liveData
-import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
 import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi.Companion.DEFAULT_PAGE_SIZE
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,10 +20,10 @@ class StarWarsRepository @Inject constructor(
     fun getPeople() =
         Pager(
             config = PagingConfig(
-                pageSize = 10,
+                pageSize = DEFAULT_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { peopleDao.getPeople() },
+            pagingSourceFactory = { peopleDao.peoplePagingSource() },
             remoteMediator = StarWarsRemoteMediator(starWarsDb, starWarsApi)
-        ).liveData
+        ).flow
 }

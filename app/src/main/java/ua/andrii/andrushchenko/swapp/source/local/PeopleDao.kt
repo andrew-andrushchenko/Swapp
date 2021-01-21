@@ -14,7 +14,10 @@ interface PeopleDao {
     suspend fun insertAll(people: List<Person>)
 
     @Query("SELECT * FROM people_table")
-    fun getPeople(): PagingSource<Int, Person>
+    fun peoplePagingSource(): PagingSource<Int, Person>
+
+    @Query("SELECT * FROM people_table WHERE name LIKE :name")
+    fun searchPeople(name: String): List<Person>
 
     @Query("DELETE FROM people_table")
     suspend fun deleteAll()

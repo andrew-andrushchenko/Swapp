@@ -8,21 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import ua.andrii.andrushchenko.swapp.R
-import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.databinding.ItemPersonBinding
+import ua.andrii.andrushchenko.swapp.model.Person
 
 class StarWarsPeopleAdapter(private val listener: OnItemClickListener) :
     PagingDataAdapter<Person, StarWarsPeopleAdapter.PersonViewHolder>(PERSON_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonViewHolder {
         val binding = ItemPersonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
         return PersonViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PersonViewHolder, position: Int) {
         val currentItem = getItem(position)
-
         if (currentItem != null) holder.bind(currentItem)
     }
 
@@ -62,7 +60,7 @@ class StarWarsPeopleAdapter(private val listener: OnItemClickListener) :
     companion object {
         private val PERSON_COMPARATOR = object : DiffUtil.ItemCallback<Person>() {
             override fun areItemsTheSame(oldItem: Person, newItem: Person): Boolean =
-                oldItem.name == newItem.name
+                oldItem.url == newItem.url
 
             override fun areContentsTheSame(oldItem: Person, newItem: Person): Boolean =
                 oldItem == newItem

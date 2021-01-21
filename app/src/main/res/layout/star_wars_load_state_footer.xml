@@ -15,12 +15,13 @@
         android:id="@+id/text_view_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Results could not be loaded" />
+        android:text="@string/error_loading_results" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_retry"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Retry" />
+        android:text="@string/txt_retry" />
 
 </LinearLayout>
