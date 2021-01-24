@@ -17,8 +17,11 @@
     <string name="search_results">Search results</string>
     <string name="error_loading_results">Results could not be loaded</string>
     <string name="txt_retry">Retry</string>
-    <string name="no_results_for_query">No results found for this query</string>
-    <string name="fragment_people_title">All characters</string>
+    <string name="no_results_for_query">Seems like no results found</string>
+    <string name="fragment_people_title">Characters</string>
     <string name="fragment_person_details">Person info</string>
     <string name="person_eye_color">Eyes:</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_server_not_respond">Server not responding</string>
+    <string name="error_unknown">Unknown error</string>
 </resources>

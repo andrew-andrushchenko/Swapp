@@ -37,8 +37,8 @@ class StarWarsRemoteMediator(
                         //end of list condition reached
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
-                    remoteKeys.prevKey
 
+                    remoteKeys.prevKey
                 }
                 LoadType.APPEND -> {
                     val remoteKeys = getLastRemoteKey(state)
@@ -78,7 +78,7 @@ class StarWarsRemoteMediator(
 
             //If there are no more results then end of list condition reached
             //if there are some items then end of list is not reached
-            MediatorResult.Success(endOfPaginationReached = response.results.isEmpty())
+            MediatorResult.Success(endOfPaginationReached = response.next.isNullOrBlank())
 
         } catch (e: IOException) {
             MediatorResult.Error(e)
@@ -86,28 +86,6 @@ class StarWarsRemoteMediator(
             MediatorResult.Error(e)
         }
     }
-
-    /*private suspend fun getPageKeyData(loadType: LoadType, state: PagingState<Int, Person>): Any {
-        return when (loadType) {
-            LoadType.REFRESH -> {
-                *//*val remoteKey = getClosestRemoteKey(state)
-                remoteKey?.nextKey?.minus(1) ?: DEFAULT_PAGE_INDEX*//*
-                DEFAULT_PAGE_INDEX
-            }
-            LoadType.APPEND -> {
-                val remoteKeys = getLastRemoteKey(state)
-                    ?: throw InvalidObjectException("Remote key should not be null for $loadType")
-                remoteKeys.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
-            }
-            LoadType.PREPEND -> {
-                val remoteKeys = getFirstRemoteKey(state)
-                    ?: throw InvalidObjectException("Invalid state, key should not be null")
-                //end of list condition reached
-                remoteKeys.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
-                //remoteKeys.prevKey //TODO: review
-            }
-        }
-    }*/
 
     private suspend fun getLastRemoteKey(state: PagingState<Int, Person>): RemoteKey? {
         return state.pages

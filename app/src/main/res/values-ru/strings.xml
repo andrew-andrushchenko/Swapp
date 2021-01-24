@@ -7,7 +7,7 @@
     <string name="person_kg">кг</string>
     <string name="person_cm">см</string>
     <string name="person_mass">Масса:</string>
-    <string name="person_height">Высота:</string>
+    <string name="person_height">Рост:</string>
     <string name="person_gender">Пол:</string>
     <string name="person_skin">Цвет кожи:</string>
     <string name="person_hair">Цвет волос:</string>
@@ -16,8 +16,11 @@
     <string name="search_results">Результаты поиска</string>
     <string name="error_loading_results">Невозможно загрузить результаты</string>
     <string name="txt_retry">Повторить попытку</string>
-    <string name="no_results_for_query">По данному запросу ничего не найдено</string>
-    <string name="fragment_people_title">Все персонажи</string>
-    <string name="fragment_person_details">Информация о персонаже</string>
+    <string name="no_results_for_query">Похоже, ничего нет</string>
+    <string name="fragment_people_title">Персонажи</string>
+    <string name="fragment_person_details">О персонаже</string>
     <string name="person_eye_color">Цвет глаз:</string>
+    <string name="error_no_internet">Нет подключения к Интернет</string>
+    <string name="error_server_not_respond">Сервер не отвечает</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
 </resources>

@@ -1,22 +1,30 @@
 package ua.andrii.andrushchenko.swapp.ui.fragments
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import ua.andrii.andrushchenko.swapp.R
 import ua.andrii.andrushchenko.swapp.databinding.FragmentPeopleBinding
 import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsLoadStateAdapter
 import ua.andrii.andrushchenko.swapp.ui.adapters.StarWarsPeopleAdapter
 import ua.andrii.andrushchenko.swapp.ui.viewmodels.PeopleViewModel
+import java.io.IOException
 
 @ExperimentalPagingApi
 @AndroidEntryPoint
@@ -41,50 +49,60 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
 
         binding.apply {
             recyclerView.setHasFixedSize(true)
-            //recyclerView.itemAnimator = null
             recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
                 header = StarWarsLoadStateAdapter { adapter.retry() },
                 footer = StarWarsLoadStateAdapter { adapter.retry() }
             )
-            buttonRetry.setOnClickListener { adapter.retry() }
 
+            //Add refresh listener
             swipeRefreshLayout.setOnRefreshListener {
                 adapter.refresh()
-                swipeRefreshLayout.isRefreshing = false
             }
         }
 
-        /*adapter.addLoadStateListener { loadState ->
+        adapter.addLoadStateListener {
             binding.apply {
-                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-                swipeRefreshLayout.isVisible = loadState.source.refresh is LoadState.NotLoading
-                buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
-                textViewError.isVisible = loadState.source.refresh is LoadState.Error
-                swipeRefreshLayout.isRefreshing = false
-
-                // empty view
-                if (loadState.source.refresh is LoadState.NotLoading &&
-                    loadState.append.endOfPaginationReached &&
+                swipeRefreshLayout.isRefreshing = it.refresh is LoadState.Loading
+                if (it.source.refresh is LoadState.NotLoading &&
+                    it.source.append.endOfPaginationReached &&
                     adapter.itemCount < 1
                 ) {
-                    swipeRefreshLayout.isVisible = false
                     textViewEmpty.isVisible = true
+                    recyclerView.isVisible = false
                 } else {
                     textViewEmpty.isVisible = false
+                    recyclerView.isVisible = true
+                }
+
+                if (it.refresh is LoadState.Error) {
+                    //Get error type
+                    val message = when ((it.refresh as LoadState.Error).error) {
+                        is IOException -> {
+                            resources.getString(R.string.error_no_internet)
+                        }
+                        is HttpException -> {
+                            resources.getString(R.string.error_server_not_respond)
+                        }
+                        else -> {
+                            resources.getString(R.string.error_unknown)
+                        }
+                    }
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
             }
-        }*/
+        }
 
+        //Fetch data from viewModel to populate recyclerView
         lifecycleScope.launch {
             viewModel.people.distinctUntilChanged().collectLatest {
                 adapter.submitData(it)
             }
         }
 
-        //setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
     }
 
-    /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
         inflater.inflate(R.menu.menu_sw, menu)
@@ -96,22 +114,22 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     //binding.recyclerView.scrollToPosition(0)
-                    viewModel.searchPeople(query)
+                    //viewModel.searchPeople(query)
                     searchView.clearFocus()
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
+                /*if (newText != null) {
                     if (newText.isEmpty()) {
-                        viewModel.searchPeople(newText)
+                        //viewModel.searchPeople(newText)
                     }
-                }
+                }*/
                 return true
             }
         })
-    }*/
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
