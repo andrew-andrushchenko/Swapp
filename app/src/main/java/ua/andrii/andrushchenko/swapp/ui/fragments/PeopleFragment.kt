@@ -77,15 +77,12 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
                 if (it.refresh is LoadState.Error) {
                     //Get error type
                     val message = when ((it.refresh as LoadState.Error).error) {
-                        is IOException -> {
+                        is IOException ->
                             resources.getString(R.string.error_no_internet)
-                        }
-                        is HttpException -> {
+                        is HttpException ->
                             resources.getString(R.string.error_server_not_respond)
-                        }
-                        else -> {
+                        else ->
                             resources.getString(R.string.error_unknown)
-                        }
                     }
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
@@ -93,7 +90,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
         }
 
         //Fetch data from viewModel to populate recyclerView
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.people.distinctUntilChanged().collectLatest {
                 adapter.submitData(it)
             }
@@ -113,19 +110,19 @@ class PeopleFragment : Fragment(R.layout.fragment_people) {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    //binding.recyclerView.scrollToPosition(0)
-                    //viewModel.searchPeople(query)
+                    binding.recyclerView.scrollToPosition(0)
+                    viewModel.searchPeople(query)
                     searchView.clearFocus()
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                /*if (newText != null) {
+                if (newText != null) {
                     if (newText.isEmpty()) {
-                        //viewModel.searchPeople(newText)
+                        viewModel.searchPeople(newText)
                     }
-                }*/
+                }
                 return true
             }
         })

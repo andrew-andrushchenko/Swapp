@@ -13,6 +13,8 @@ import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
 import java.io.IOException
 import java.io.InvalidObjectException
 
+private const val DEFAULT_PAGE_INDEX = 1
+
 @ExperimentalPagingApi
 class StarWarsRemoteMediator(
     private val starWarsDb: StarWarsDb,
@@ -61,10 +63,10 @@ class StarWarsRemoteMediator(
                     peopleDao.deleteAll()
                 }
 
-                /*Since 'next' and 'previous' properties type is String?
-                * and information about next and previous pages placed at the
-                * end of the corresponding strings
-                * we should take last chars until they are digits*/
+                /* Since 'next' and 'previous' properties type is String?
+                 * and information about next and previous pages placed at the
+                 * end of the corresponding strings
+                 * we should take last chars until they are digits*/
                 val prevKey = response.previous?.takeLastWhile { it.isDigit() }?.toInt()
                 val nextKey = response.next?.takeLastWhile { it.isDigit() }?.toInt()
 
@@ -76,8 +78,8 @@ class StarWarsRemoteMediator(
                 peopleDao.insertAll(response.results)
             }
 
-            //If there are no more results then end of list condition reached
-            //if there are some items then end of list is not reached
+            /* If there are no more results then end of list condition reached
+             * if there are some items then end of list is not reached*/
             MediatorResult.Success(endOfPaginationReached = response.next.isNullOrBlank())
 
         } catch (e: IOException) {
@@ -115,9 +117,5 @@ class StarWarsRemoteMediator(
                 remoteKeyDao.remoteKeyByLabel(label)
             }
         }
-    }
-
-    companion object {
-        const val DEFAULT_PAGE_INDEX = 1
     }
 }

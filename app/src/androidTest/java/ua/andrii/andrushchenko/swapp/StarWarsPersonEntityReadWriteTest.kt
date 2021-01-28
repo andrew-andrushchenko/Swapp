@@ -1,23 +1,19 @@
 package ua.andrii.andrushchenko.swapp
 
 import android.content.Context
+import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import org.hamcrest.CoreMatchers.equalTo
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import ua.andrii.andrushchenko.swapp.model.Person
 import ua.andrii.andrushchenko.swapp.source.local.PeopleDao
 import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
+import ua.andrii.andrushchenko.swapp.util.Utils
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -25,7 +21,7 @@ import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class StarWarsDbEntityReadWriteTest {
+class StarWarsPersonEntityReadWriteTest {
 
     private lateinit var peopleDao: PeopleDao
     private lateinit var starWarsDb: StarWarsDb
@@ -46,28 +42,17 @@ class StarWarsDbEntityReadWriteTest {
 
     @Test
     fun readWriteTest() = runBlocking {
-        val person = Person(
-            "Luke Skywalker",
-            "172",
-            "77",
-            "blond",
-            "fair",
-            "blue",
-            "19BBBY",
-            "male",
-            "https://swapi.dev/api/planets/1/",
-            "https://swapi.dev/api/people/1/"
-        )
-        peopleDao.insertAll(listOf(person))
-        val people = peopleDao.searchPeople("Luke")
-        assertEquals(1, people.size)
-        assertThat(people[0], equalTo(person))
-    }
+        val peopleList = Utils.generatePeople(5)
+        peopleDao.insertAll(peopleList)
 
-    @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("ua.andrii.andrushchenko.swapp", appContext.packageName)
+        val pagingSource = peopleDao.peoplePagingSource()
+        val actual = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1, loadSize = 5, placeholdersEnabled = false
+            )
+        )
+        val peopleListInDb = (actual as? PagingSource.LoadResult.Page)?.data
+
+        assertEquals(peopleList, peopleListInDb)
     }
 }

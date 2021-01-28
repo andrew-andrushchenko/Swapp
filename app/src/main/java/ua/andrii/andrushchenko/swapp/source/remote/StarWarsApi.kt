@@ -8,9 +8,6 @@ interface StarWarsApi {
     @GET("people/")
     suspend fun getPeopleByPage(@Query("page") page: Int?): StarWarsApiResponse
 
-    /*@GET("people/")
-    suspend fun searchPeopleByName(@Query("search") name: String): StarWarsApiResponse*/
-
     companion object {
         const val BASE_URL = "https://swapi.dev/api/"
         const val DEFAULT_PAGE_SIZE = 10

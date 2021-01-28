@@ -5,16 +5,16 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
 import ua.andrii.andrushchenko.swapp.source.local.StarWarsDb
+import ua.andrii.andrushchenko.swapp.source.remote.StarWarsApi
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object ApplicationModule {
 
     @Provides

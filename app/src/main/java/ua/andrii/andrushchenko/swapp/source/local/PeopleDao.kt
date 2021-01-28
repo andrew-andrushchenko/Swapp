@@ -16,9 +16,6 @@ interface PeopleDao {
     @Query("SELECT * FROM people_table")
     fun peoplePagingSource(): PagingSource<Int, Person>
 
-    @Query("SELECT * FROM people_table WHERE name LIKE :name")
-    fun searchPeople(name: String): List<Person>
-
     @Query("DELETE FROM people_table")
     suspend fun deleteAll()
 
